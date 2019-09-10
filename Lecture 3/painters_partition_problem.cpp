@@ -1,65 +1,86 @@
 #include<bits/stdc++.h>
-
 using namespace std;
-
 #define int long long int
-#define ld long double
-#define F first
-#define S second
-#define P pair<int,int>
-#define pb push_back
-#define db(...) __f(#__VA_ARGS__, __VA_ARGS__)
-
-template <typename Arg1>
-void __f(const char* name, Arg1&& arg1) { cout << name << " : " << arg1 << '\n'; }
-template <typename Arg1, typename... Args>
-void __f(const char* names, Arg1&& arg1, Args&&... args) {
-	const char* comma = strchr(names + 1, ',');
-	cout.write(names, comma - names) << " : " << arg1 << " | "; __f(comma + 1, args...);
+vector<int> v;
+int c,n,sum;
+bool check(int mid){
+    int p=c;
+    int x=0;
+    int i=0;
+    while(i<n){
+        // cout << i << endl;
+        x+=v[i];
+        if(x>=mid){
+            x=0;
+            if(i>0)
+            i--;
+            p--;
+            if(p==0){
+                return true;
+            }
+        }
+        i++;
+    }
+    return false;
 }
-
-const int N = 100005;
-
-bool check(int a[], int n, int dis, int k) {
-	int  i, placed = 1, given = 0;
-	for (i = 0; i < n; i++) {
-		if (given + a[i] <= dis) {
-			given += a[i];
-		}
-		else {
-			placed++;
-			given = a[i];
-		}
-	}
-	return placed <= k;
+void find(int l){
+    // cout <<l <<endl;
+    int x=0;
+    int i=0;
+    int max=0;
+    for(auto x : v){
+        if(x>max){
+            max=x;
+        }
+    }
+    while(i<n){
+        x+=v[i];    
+        if(x>=l){
+            x-=v[i];
+            if(x>max){
+                max=x;
+             }   
+            x=0;
+            i--;
+        }
+        i++;
+    }    
+    cout <<max << endl;
 }
-
-int32_t main()
-{
-	ios_base:: sync_with_stdio(false);
-	cin.tie(NULL); cout.tie(NULL);
-	// int t; cin >> t; while (t--)
-	{
-		int i, j, k, n, m, ans = 0, cnt = 0, sum = 0;
-		cin >> n >> m;
-		int a[n];
-		int mn = 1e18;
-		for (i = 0; i < n; i++) {
-			cin >> a[i];
-			sum += a[i];
-			mn = min(a[i], mn);
-		}
-		sort(a, a + n);
-		int lf = 0, rt = sum;
-		while (lf < rt) {
-			int mid = (lf + rt) / 2;
-			if (check(a, n, mid, m)) {
-				rt = mid;
-			}
-			else {
-				lf = mid + 1;
-			}
-		}
-		cout << lf;
-	}
+void go(int l ,int r){
+    if(l>=r){
+        // cout << l<<endl;
+       find(l);
+        return ;
+    }
+    int mid=(r+l)/2;
+    // cout << mid ;
+    if(!check(mid)){
+        // cout << "left " << l<<endl;
+        go(l,mid);
+    }else{
+        // cout << "right "<<r << endl;
+        go(mid+1,r);
+    }
+}
+int32_t main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);cout.tie(NULL);
+    int t;
+    //cin >>t;    while (t--)
+    {
+        cin >> c >> n;
+        v.resize(n,0);
+        sum=0;
+        for(int i=0;i<n;i++){
+            cin >> v[i];
+            sum+=v[i];
+        }
+    }
+    sort(v.begin(),v.end());
+    // for(auto x:v2){
+    //     cout << x << endl ;
+    // }
+    go(0,sum);
+    return 0;
 }
